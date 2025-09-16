@@ -48,28 +48,45 @@ class _HomePageState extends State<HomePage> {
 
   final List<Product> cart = [];
 
-  void addToCart(Product product) async {
-    if (product.available) {
-      setState(() {
-        cart.add(product);
+  // void addToCart(Product product) async {
+  //   if (product.available) {
+  //     setState(() {
+  //       cart.add(product);
+  //     });
+  //
+  //     User? user = FirebaseAuth.instance.currentUser;
+  //     if (user != null) {
+  //       await FirebaseFirestore.instance.collection('carts').doc(user.uid).collection('items').add({
+  //         'name': product.name,
+  //         'price': product.price,
+  //         'timestamp': FieldValue.serverTimestamp(),
+  //       });
+  //     }
+  //
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(SnackBar(content: Text("${product.name} added to cart")));
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("${product.name} is out of stock")),
+  //     );
+  //   }
+  // }
+
+  Future<void> addToCart(String name, double price) async {
+    try {
+      CollectionReference products = FirebaseFirestore.instance.collection(
+        'Carts',
+      );
+      await products.add({
+        'name': name,
+        'price': price,
+        'timestamp': FieldValue.serverTimestamp(),
       });
 
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        await FirebaseFirestore.instance.collection('carts').doc(user.uid).collection('items').add({
-          'name': product.name,
-          'price': product.price,
-          'timestamp': FieldValue.serverTimestamp(),
-        });
-      }
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("${product.name} added to cart")));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("${product.name} is out of stock")),
-      );
+      print("Product added successfully!");
+    } catch (e) {
+      print("Error adding product: $e");
     }
   }
 
@@ -77,13 +94,12 @@ class _HomePageState extends State<HomePage> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CheckoutPage(cart: cart)),
+      MaterialPageRoute(builder: (context) => CheckoutPage()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final appColors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -155,7 +171,7 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(height: 8),
                         product.available
                             ? ElevatedButton(
-                                onPressed: () => addToCart(product),
+                                onPressed: () => addToCart(product.name, product.price),
                                 child: const Text("Add to Cart"),
                               )
                             : const Text(

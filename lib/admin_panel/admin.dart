@@ -162,7 +162,7 @@ class AdminHome extends StatelessWidget {
         child: Icon(Icons.add),
       ),
       appBar: AppBar(
-        actions: [ThemeButton(), Icon(Icons.logout), SizedBox(width: 10)],
+        actions: [ThemeButton(),  SizedBox(width: 10)],
         title: const Text('Admin Panel'),
         backgroundColor: Colors.deepOrangeAccent,
       ),

@@ -1,22 +1,52 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../model/product.dart';
 
 class CheckoutPage extends StatefulWidget {
-  final List<Product> cart;
-  const CheckoutPage({super.key, required this.cart});
+  // final List<Product> cart;
+  const CheckoutPage({super.key});
 
   @override
   State<CheckoutPage> createState() => _CheckoutPageState();
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
+  List<Product> _cartItems = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCartItems();
+  }
+
+  Future<void> _fetchCartItems() async {
+    try {
+      QuerySnapshot cartSnapshot =
+      await FirebaseFirestore.instance.collection('Carts').get();
+      List<Product> fetchedItems = cartSnapshot.docs.map((doc) {
+        return Product.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+      setState(() {
+        _cartItems = fetchedItems;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching cart items: $e");
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    double total = widget.cart.fold(0, (sum, item) => sum + item.price);
+    double total = _cartItems.fold(0, (sum, item) => sum + item.price);
 
     return Scaffold(
       appBar: AppBar(title: const Text("Checkout")),
-      body: widget.cart.isEmpty
+      body: _isLoading ? const Center(child: CircularProgressIndicator()) : _cartItems.isEmpty
           ? const Center(child: Text("Your cart is empty"))
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -24,19 +54,19 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 children: [
                   Expanded(
                     child: ListView.builder(
-                      itemCount: widget.cart.length,
+                      itemCount: _cartItems.length,
                       itemBuilder: (context, index) {
-                        final product = widget.cart[index];
+                        final product = _cartItems[index];
                         return Card(
                           elevation: 5,
                           child: ListTile(
                             title: Text(product.name),
                             subtitle: Text("₹${product.price}"),
                             trailing: IconButton(
-                              icon: const Icon(Icons.delete),
+                              icon: const Icon(Icons.remove_shopping_cart),
                               onPressed: () {
                                 setState(() {
-                                  widget.cart.removeAt(index);
+                                  _cartItems.removeAt(index);
                                 });
                               },
                             ),
