@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mini_ecommerce/Components/glass_card.dart';
 import '../Components/them_button.dart';
 import '../auth/login.dart';
 import '../model/product.dart';
@@ -27,15 +28,17 @@ class _HomePageState extends State<HomePage> {
               },
               child: const Text("No"),
             ),
-            TextButton(
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.of(context).pop();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
-              child: const Text("Yes"),
+            LiquidGlass(
+              child: TextButton(
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                child: const Text("Yes"),
+              ),
             ),
           ],
         );
@@ -45,11 +48,21 @@ class _HomePageState extends State<HomePage> {
 
   final List<Product> cart = [];
 
-  void addToCart(Product product) {
+  void addToCart(Product product) async {
     if (product.available) {
       setState(() {
         cart.add(product);
       });
+
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('carts').doc(user.uid).collection('items').add({
+          'name': product.name,
+          'price': product.price,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+      }
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("${product.name} added to cart")));
