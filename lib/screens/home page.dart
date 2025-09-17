@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mini_ecommerce/Components/glass_card.dart';
 import 'package:provider/provider.dart';
 import '../Components/them_button.dart';
 import '../auth/login.dart';
@@ -30,17 +29,15 @@ class _HomePageState extends State<HomePage> {
               },
               child: const Text("No"),
             ),
-            LiquidGlass(
-              child: TextButton(
-                onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-                },
-                child: const Text("Yes"),
-              ),
+            TextButton(
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text("Yes"),
             ),
           ],
         );
@@ -59,6 +56,7 @@ class _HomePageState extends State<HomePage> {
         'name': name,
         'price': price,
         'timestamp': FieldValue.serverTimestamp(),
+        'user_id': FirebaseAuth.instance.currentUser!.uid,
       });
 
       ScaffoldMessenger.of(
@@ -162,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
