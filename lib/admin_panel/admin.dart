@@ -162,7 +162,7 @@ class AdminHome extends StatelessWidget {
         child: Icon(Icons.add),
       ),
       appBar: AppBar(
-        actions: [ThemeButton(),  SizedBox(width: 10)],
+        actions: [ThemeButton(), SizedBox(width: 10)],
         title: const Text('Admin Panel'),
         backgroundColor: Colors.deepOrangeAccent,
       ),
@@ -202,11 +202,39 @@ class AdminHome extends StatelessWidget {
                         },
                       ),
                       IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
+                        icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
-                          deleteProductFromFirestore(document.id);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Product deleted!')),
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Confirm Delete'),
+                              content: const Text(
+                                'Are you sure you want to delete this product?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(); // Close dialog
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    deleteProductFromFirestore(document.id);
+                                    Navigator.of(context).pop(); // Close dialog
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Product deleted!'),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'Delete',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
                           );
                         },
                       ),
