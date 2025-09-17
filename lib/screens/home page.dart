@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mini_ecommerce/Components/glass_card.dart';
+import 'package:provider/provider.dart';
 import '../Components/them_button.dart';
 import '../auth/login.dart';
 import '../model/product.dart';
+import '../themes/them_provider.dart';
 import 'checkoutpage.dart';
 
 class HomePage extends StatefulWidget {
@@ -48,31 +50,6 @@ class _HomePageState extends State<HomePage> {
 
   final List<Product> cart = [];
 
-  // void addToCart(Product product) async {
-  //   if (product.available) {
-  //     setState(() {
-  //       cart.add(product);
-  //     });
-  //
-  //     User? user = FirebaseAuth.instance.currentUser;
-  //     if (user != null) {
-  //       await FirebaseFirestore.instance.collection('carts').doc(user.uid).collection('items').add({
-  //         'name': product.name,
-  //         'price': product.price,
-  //         'timestamp': FieldValue.serverTimestamp(),
-  //       });
-  //     }
-  //
-  //     ScaffoldMessenger.of(
-  //       context,
-  //     ).showSnackBar(SnackBar(content: Text("${product.name} added to cart")));
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("${product.name} is out of stock")),
-  //     );
-  //   }
-  // }
-
   Future<void> addToCart(String name, double price) async {
     try {
       CollectionReference products = FirebaseFirestore.instance.collection(
@@ -84,14 +61,15 @@ class _HomePageState extends State<HomePage> {
         'timestamp': FieldValue.serverTimestamp(),
       });
 
-      print("Product added successfully!");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Added successfully")));
     } catch (e) {
       print("Error adding product: $e");
     }
   }
 
   void goToCheckout() {
-
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CheckoutPage()),
@@ -100,6 +78,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -145,38 +124,83 @@ class _HomePageState extends State<HomePage> {
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 3 / 2,
+                childAspectRatio: 0.9,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
               ),
               itemCount: products.length,
               itemBuilder: (context, index) {
                 final product = products[index];
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    elevation: 5,
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 2,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    color: themeProvider.isDarkMode
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          product.name,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Column(
+                          children: [
+                            Text(
+                              product.name,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              "₹${product.price.toStringAsFixed(0)}",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                color: Colors.green,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          "₹${product.price.toStringAsFixed(0)}",
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        const SizedBox(height: 8),
                         product.available
-                            ? ElevatedButton(
-                                onPressed: () => addToCart(product.name, product.price),
-                                child: const Text("Add to Cart"),
+                            ? SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () =>
+                                      addToCart(product.name, product.price),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                    ),
+                                  ),
+                                  child: const Text("Add to Cart"),
+                                ),
                               )
                             : const Text(
                                 "Out of stock",
-                                style: TextStyle(color: Colors.red),
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                       ],
                     ),

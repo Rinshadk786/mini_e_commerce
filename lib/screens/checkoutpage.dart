@@ -22,8 +22,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   Future<void> _fetchCartItems() async {
     try {
-      QuerySnapshot cartSnapshot =
-      await FirebaseFirestore.instance.collection('Carts').get();
+      QuerySnapshot cartSnapshot = await FirebaseFirestore.instance
+          .collection('Carts')
+          .get();
       List<Product> fetchedItems = cartSnapshot.docs.map((doc) {
         return Product.fromMap(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
@@ -46,7 +47,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text("Checkout")),
-      body: _isLoading ? const Center(child: CircularProgressIndicator()) : _cartItems.isEmpty
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _cartItems.isEmpty
           ? const Center(child: Text("Your cart is empty"))
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
