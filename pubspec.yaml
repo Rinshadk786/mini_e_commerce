@@ -17,6 +17,7 @@ dependencies:
   cloud_firestore: ^4.15.9
   provider: ^6.1.1
   shared_preferences: ^2.2.2
+  confetti: ^0.7.0
 
 dev_dependencies:
   flutter_test:

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mini_ecommerce/screens/profile_page.dart';
 import 'package:provider/provider.dart';
 import '../Components/them_button.dart';
-import '../auth/login.dart';
 import '../model/product.dart';
 import '../themes/them_provider.dart';
 import 'checkoutpage.dart';
@@ -15,36 +15,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void _showDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Logout"),
-          content: const Text("Are you sure you want to logout?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // close dialog
-              },
-              child: const Text("No"),
-            ),
-            TextButton(
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.of(context).pop();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
-              child: const Text("Yes"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   final List<Product> cart = [];
 
   Future<void> addToCart(String name, double price) async {
@@ -67,6 +37,26 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> buyNow(String name, double price) async {
+    try {
+      CollectionReference orders = FirebaseFirestore.instance.collection(
+        'Orders',
+      );
+      await orders.add({
+        'name': name,
+        'price': price,
+        'timestamp': FieldValue.serverTimestamp(),
+        'user_id': FirebaseAuth.instance.currentUser!.uid,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Order placed successfully!")),
+      );
+    } catch (e) {
+      print("Error placing order: $e");
+    }
+  }
+
   void goToCheckout() {
     Navigator.push(
       context,
@@ -79,18 +69,44 @@ class _HomePageState extends State<HomePage> {
     final themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text("Home Page"),
+        title: SizedBox(
+          height: 50,
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: "Search...",
+              prefixIcon: Icon(Icons.search),
+              contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(18),
+                borderSide: BorderSide(width: 2),
+              ),
+              filled: true,
+              fillColor: Theme.of(context).colorScheme.tertiary,
+            ),
+            onChanged: (value) {
+              print("Searching: $value");
+            },
+          ),
+        ),
         actions: [
           ThemeButton(),
           IconButton(
             icon: const Icon(Icons.shopping_cart),
             onPressed: goToCheckout,
           ),
+          // IconButton(
+          //   icon: const Icon(Icons.logout),
+          //   onPressed: () => _showDialog(context),
+          //   tooltip: 'Logout',
+          // ),
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => _showDialog(context),
-            tooltip: 'Logout',
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (builder) => ProfilePage()),
+              );
+            },
           ),
         ],
       ),
@@ -132,11 +148,11 @@ class _HomePageState extends State<HomePage> {
                 return Container(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      width: 2,
+                      width: 1,
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     color: themeProvider.isDarkMode
-                        ? Colors.grey.shade800
+                        ? Colors.grey.shade900
                         : Colors.grey.shade100,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
@@ -176,28 +192,60 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                         product.available
-                            ? SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () =>
-                                      addToCart(product.name, product.price),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 10,
+                            ? Column(
+                                children: [
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () => addToCart(
+                                        product.name,
+                                        product.price,
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 10,
+                                        ),
+                                      ),
+                                      child: const Text("Add to Cart"),
                                     ),
                                   ),
-                                  child: const Text("Add to Cart"),
-                                ),
+                                  const SizedBox(height: 8),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () =>
+                                          buyNow(product.name, product.price),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.green,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 10,
+                                        ),
+                                      ),
+                                      child: const Text("Buy Now"),
+                                    ),
+                                  ),
+                                ],
                               )
-                            : const Text(
-                                "Out of stock",
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.w500,
+                            : const SizedBox(
+                                width: double.infinity,
+                                child: Text(
+                                  "Out of stock",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                       ],

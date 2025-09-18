@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final appColors = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text("Login"), actions: [ThemeButton()]),
+      appBar: AppBar(title: const Text("Login"), actions: []),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Form(
@@ -57,6 +57,8 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Spacer(),
+              ThemeButton(),
+              const SizedBox(height: 30),
               Row(
                 children: [
                   const Text(
