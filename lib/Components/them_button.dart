@@ -168,7 +168,6 @@ class _ThemeButtonState extends State<ThemeButton> {
     return Stack(
       alignment: Alignment.center,
       children: [
-        /// 🎊 Confetti widget behind the button
         ConfettiWidget(
           confettiController: _confettiController,
           blastDirectionality: BlastDirectionality.explosive, // in all directions
@@ -178,6 +177,9 @@ class _ThemeButtonState extends State<ThemeButton> {
           minBlastForce: 5,
           gravity: 0.3,
           colors: const [
+            Colors.white,
+            Colors.yellow,
+            Colors.red,
             Colors.orange,
             Colors.blue,
             Colors.green,
