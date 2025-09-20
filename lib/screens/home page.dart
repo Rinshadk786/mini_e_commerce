@@ -69,6 +69,7 @@ class _HomePageState extends State<HomePage> {
     final themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: SizedBox(
           height: 50,
           child: TextField(

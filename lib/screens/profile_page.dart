@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_ecommerce/Components/them_button.dart';
-import '../auth/login.dart';
+import '../auth/login/login_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

@@ -48,7 +48,6 @@
 //       child: Stack(
 //         alignment: Alignment.center,
 //         children: [
-//           /// 🌟 Radial burst behind icon
 //           AnimatedBuilder(
 //             animation: _controller,
 //             builder: (context, child) {
@@ -69,7 +68,7 @@
 //               return ScaleTransition(
 //                 scale: CurvedAnimation(
 //                   parent: animation,
-//                   curve: Curves.elasticOut,
+//                   curve: Curves.linear
 //                 ),
 //                 child: RotationTransition(
 //                   turns: animation,
@@ -128,14 +127,9 @@
 //       oldDelegate.progress != progress;
 // }
 
-
-
-
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:confetti/confetti.dart';
-
 import '../themes/them_provider.dart';
 
 class ThemeButton extends StatefulWidget {
@@ -151,8 +145,9 @@ class _ThemeButtonState extends State<ThemeButton> {
   @override
   void initState() {
     super.initState();
-    _confettiController =
-        ConfettiController(duration: const Duration(milliseconds: 600));
+    _confettiController = ConfettiController(
+      duration: const Duration(milliseconds: 600),
+    );
   }
 
   @override
@@ -170,7 +165,8 @@ class _ThemeButtonState extends State<ThemeButton> {
       children: [
         ConfettiWidget(
           confettiController: _confettiController,
-          blastDirectionality: BlastDirectionality.explosive, // in all directions
+          blastDirectionality:
+              BlastDirectionality.explosive, // in all directions
           emissionFrequency: 0.8,
           numberOfParticles: 12,
           maxBlastForce: 20,
@@ -219,3 +215,103 @@ class _ThemeButtonState extends State<ThemeButton> {
     );
   }
 }
+
+//
+// import 'package:flutter/material.dart';
+// import 'package:provider/provider.dart';
+// import '../themes/them_provider.dart';
+//
+// class ThemeButton extends StatefulWidget {
+//   const ThemeButton({super.key});
+//
+//   @override
+//   State<ThemeButton> createState() => _ThemeButtonState();
+// }
+//
+// class _ThemeButtonState extends State<ThemeButton>
+//     with SingleTickerProviderStateMixin {
+//   late AnimationController _controller;
+//   late Animation<double> _anim;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _controller = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 900),
+//     );
+//     _anim = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+//   }
+//
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+//
+//   void _triggerExpand() {
+//     _controller
+//       ..reset()
+//       ..forward();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final themeProvider = context.watch<ThemeProvider>();
+//
+//     return GestureDetector(
+//       onTap: () {
+//         themeProvider.toggleTheme();
+//         _triggerExpand();
+//       },
+//       child: Stack(
+//         alignment: Alignment.center,
+//         children: [
+//           /// 🌌 Expanding aura circle
+//           AnimatedBuilder(
+//             animation: _anim,
+//             builder: (context, child) {
+//               final size = 40 + (_anim.value * 200); // grows large
+//               return Container(
+//                 width: size,
+//                 height: size,
+//                 decoration: BoxDecoration(
+//                   shape: BoxShape.circle,
+//                   color: (themeProvider.isDarkMode
+//                       ? Colors.amber
+//                       : Colors.indigo)
+//                       .withOpacity(0.15 * (1 - _anim.value)), // fades out
+//                 ),
+//               );
+//             },
+//           ),
+//
+//           /// 🌗 The theme icon
+//           AnimatedSwitcher(
+//             duration: const Duration(milliseconds: 600),
+//             transitionBuilder: (child, animation) {
+//               return ScaleTransition(
+//                 scale: CurvedAnimation(
+//                   parent: animation,
+//                   curve: Curves.elasticOut,
+//                 ),
+//                 child: RotationTransition(
+//                   turns: animation,
+//                   child: child,
+//                 ),
+//               );
+//             },
+//             child: Icon(
+//               themeProvider.isDarkMode
+//                   ? Icons.light_mode_outlined
+//                   : Icons.dark_mode_outlined,
+//               key: ValueKey(themeProvider.isDarkMode),
+//               size: 32,
+//               color: themeProvider.isDarkMode ? Colors.amber : Colors.indigo,
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

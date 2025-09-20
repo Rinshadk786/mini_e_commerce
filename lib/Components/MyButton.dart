@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
+  final String text;
   const MyButton({
     super.key,
+    required this.text,
   });
 
   @override
@@ -15,7 +17,7 @@ class MyButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.0),
       ),
       child: Center(
-        child: Text("Login", style: TextStyle(fontSize: 15)),
+        child: Text(text, style: TextStyle(fontSize: 15)),
       ),
     );
   }

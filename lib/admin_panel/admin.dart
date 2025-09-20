@@ -28,10 +28,10 @@ class AdminHome extends StatelessWidget {
     }
 
     Future<void> updateProductInFirestore(
-      String docId,
-      String name,
-      double price,
-    ) async {
+        String docId,
+        String name,
+        double price,
+        ) async {
       try {
         CollectionReference products = FirebaseFirestore.instance.collection(
           'products',
@@ -186,7 +186,7 @@ class AdminHome extends StatelessWidget {
             itemBuilder: (context, index) {
               DocumentSnapshot document = snapshot.data!.docs[index];
               Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+              document.data()! as Map<String, dynamic>;
               return Card(
                 margin: EdgeInsets.all(8.0),
                 child: ListTile(
@@ -214,14 +214,14 @@ class AdminHome extends StatelessWidget {
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.of(context).pop(); // Close dialog
+                                    Navigator.of(context).pop();
                                   },
                                   child: const Text('Cancel'),
                                 ),
                                 TextButton(
                                   onPressed: () {
                                     deleteProductFromFirestore(document.id);
-                                    Navigator.of(context).pop(); // Close dialog
+                                    Navigator.of(context).pop();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('Product deleted!'),

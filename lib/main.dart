@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:mini_ecommerce/screens/home%20page.dart';
 import 'package:mini_ecommerce/themes/them_provider.dart';
 import 'package:provider/provider.dart';
-import 'auth/login.dart';
+import 'admin_panel/admin.dart';
+import 'auth/login/login_page.dart';
+import 'auth/login/login_provider.dart';
+import 'auth/signing/signup_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +23,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         //
+        ChangeNotifierProvider(create: (_) => SignUpViewModel()),
+        ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
        //
       ],
@@ -28,7 +33,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'E-Commerce App',
           theme: themeProvider.themeData,
-          home: const AuthWrapper(),
+          home:  AuthWrapper(),
         ),
       ),
     );
