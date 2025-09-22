@@ -3,7 +3,8 @@ import 'package:mini_ecommerce/auth/signing/signup_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:mini_ecommerce/Components/MyButton.dart';
 import 'package:mini_ecommerce/Components/text_field.dart';
-import '../../screens/home page.dart';
+import '../../screens/Homepage/HomeView.dart';
+
 import '../login/login_page.dart';
 
 

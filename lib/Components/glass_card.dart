@@ -60,19 +60,22 @@ class LiquidGlass extends StatelessWidget {
     super.key,
     required this.child,
     this.borderRadius = 20,
-    this.elevation = 8,
-    this.x = 5,
-    this.y = 5,
+    this.elevation = 12,
+    this.x = 20, // stronger blur
+    this.y = 20,
     this.padding = const EdgeInsets.all(16),
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return PhysicalModel(
       color: Colors.transparent,
       elevation: elevation,
-      //shadowColor: Colors.grey.shade700,
       borderRadius: BorderRadius.circular(borderRadius),
+      shadowColor: Colors.black.withOpacity(0.25),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: BackdropFilter(
@@ -80,9 +83,24 @@ class LiquidGlass extends StatelessWidget {
           child: Container(
             padding: padding,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
               borderRadius: BorderRadius.circular(borderRadius),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              gradient: LinearGradient(
+                colors: isDark
+                    ? [
+                  Colors.white.withOpacity(0.05),
+                  Colors.white.withOpacity(0.02),
+                ]
+                    : [
+                  Colors.white.withOpacity(0.4),
+                  Colors.white.withOpacity(0.15),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.4),
+                width: 1.2,
+              ),
             ),
             child: child,
           ),

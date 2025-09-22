@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mini_ecommerce/screens/home page.dart';
 import '../../Components/MyButton.dart';
 import '../../Components/text_field.dart';
 import '../../Components/them_button.dart';
+import '../../screens/Homepage/HomeView.dart';
 import '../signing/signuppage.dart';
 import 'login_provider.dart';
 

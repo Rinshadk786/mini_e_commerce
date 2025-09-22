@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mini_ecommerce/Components/glass_card.dart';
 import 'package:mini_ecommerce/Components/them_button.dart';
 
 class AdminHome extends StatelessWidget {
@@ -109,57 +110,79 @@ class AdminHome extends StatelessWidget {
     }
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Add New Product'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    TextField(
-                      controller: _nameController,
-                      decoration: InputDecoration(labelText: 'Product Name'),
+      drawer: LiquidGlass(
+        y: 3,
+        x: 3,
+        child: Drawer(
+          shadowColor: Colors.transparent,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: ListView(),
+        ),
+      ),
+      floatingActionButton: LiquidGlass(
+        x: 2,
+        y: 3,
+        borderRadius: 20,
+        elevation: 0,
+        padding: EdgeInsetsGeometry.all(1),
+        child: FloatingActionButton(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          foregroundColor: Theme.of(context).colorScheme.primary,
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Add New Product'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      TextField(
+                        controller: _nameController,
+                        decoration: InputDecoration(labelText: 'Product Name'),
+                      ),
+                      TextField(
+                        controller: _priceController,
+                        decoration: InputDecoration(labelText: 'Product Price'),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ],
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('Cancel'),
+                      onPressed: () {
+                        _nameController.clear();
+                        _priceController.clear();
+                        Navigator.of(context).pop();
+                      },
                     ),
-                    TextField(
-                      controller: _priceController,
-                      decoration: InputDecoration(labelText: 'Product Price'),
-                      keyboardType: TextInputType.number,
+                    TextButton(
+                      child: Text('Add'),
+                      onPressed: () {
+                        addProductToFirestore(
+                          _nameController.text,
+                          double.parse(_priceController.text),
+                        );
+                        _nameController.clear();
+                        _priceController.clear();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Product added successfully!'),
+                          ),
+                        );
+                        Navigator.of(context).pop();
+                      },
                     ),
                   ],
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('Cancel'),
-                    onPressed: () {
-                      _nameController.clear();
-                      _priceController.clear();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: Text('Add'),
-                    onPressed: () {
-                      addProductToFirestore(
-                        _nameController.text,
-                        double.parse(_priceController.text),
-                      );
-                      _nameController.clear();
-                      _priceController.clear();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Product added successfully!')),
-                      );
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        },
-        child: Icon(Icons.add),
+                );
+              },
+            );
+          },
+          child: Icon(Icons.add),
+        ),
       ),
       appBar: AppBar(
         actions: [ThemeButton(), SizedBox(width: 10)],
@@ -214,14 +237,14 @@ class AdminHome extends StatelessWidget {
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop(); // Close dialog
                                   },
                                   child: const Text('Cancel'),
                                 ),
                                 TextButton(
                                   onPressed: () {
                                     deleteProductFromFirestore(document.id);
-                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop(); // Close dialog
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('Product deleted!'),

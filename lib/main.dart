@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mini_ecommerce/screens/home%20page.dart';
+import 'package:mini_ecommerce/screens/Homepage/HomeView.dart';
+import 'package:mini_ecommerce/screens/Homepage/HomeViewModel.dart';
 import 'package:mini_ecommerce/themes/them_provider.dart';
 import 'package:provider/provider.dart';
-import 'admin_panel/admin.dart';
 import 'auth/login/login_page.dart';
 import 'auth/login/login_provider.dart';
 import 'auth/signing/signup_provider.dart';
@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SignUpViewModel()),
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => HomeProvider()),
        //
       ],
       child: Consumer<ThemeProvider>(

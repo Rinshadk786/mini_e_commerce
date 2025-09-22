@@ -7,6 +7,7 @@ class Product {
     required this.id,
     required this.name,
     required this.price,
+    required available,
   });
 
   factory Product.fromFirestore(Map<String, dynamic> data, String id) {
@@ -14,14 +15,13 @@ class Product {
       id: id,
       name: data['name'] ?? '',
       price: (data['price'] ?? 0).toDouble(),
+      available: true,
     );
   }
 
+  bool get available => true;
+
   Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'price': price,
-      'timestamp': DateTime.now(),
-    };
+    return {'name': name, 'price': price, 'timestamp': DateTime.now()};
   }
 }
